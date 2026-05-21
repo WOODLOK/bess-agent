@@ -2,13 +2,11 @@
 
 将 BESS（电池储能系统）供应链的非结构化中断经验转化为可追溯、可复用、可检索的结构化因果案例的声明式 AI 智能体。
 
-## 它是什么 / 不是什么
+## 它是什么
 
-**是**：一个 markdown + JSON schema 主导的 AI 智能体仓库。用户在 Claude Code 或 Codex 中提及 `AGENT.md` 即可激活智能体，将私域的供应链中断材料（合同、邮件、运输单据、会议纪要）解析为结构化因果案例并沉淀到本地记忆库。
+一个 markdown + JSON schema 主导的 AI 智能体仓库。用户在 Claude Code 或 Codex 中提及 `AGENT.md` 即可激活智能体，将私域的供应链中断材料（合同、邮件、运输单据、会议纪要）解析为结构化因果案例并沉淀到本地记忆库。
 
-**不是**：一个 Python 应用、一个 Web 服务、一个数据库。本仓库 80% 以上是 markdown 与 JSON——代码仅在 LLM 无法直接完成的任务（如本地向量化、PDF 文本抽取）时才出场。
-
-## 30 秒上手
+## 快速启动
 
 ```bash
 # 1. 克隆仓库
@@ -16,8 +14,9 @@ git clone https://github.com/<your-org>/bess-agent.git
 cd bess-agent
 
 # 2. 在 Claude Code 中激活智能体
-# 打开 Claude Code，在对话中输入：
-@AGENT.md 分析我在 inputs/ 下放置的中断材料
+# 打开 Claude Code，在对话中输入例如：
+：@AGENT.md 分析我在 inputs/ 下放置的中断材料
+：@AGENT.md  我们的一批 LFP 电芯 2023 年底从中国发欧洲时延误了 20 天是为什么
 
 # 3. 将你的私域材料放入 inputs/ 目录，告诉智能体"分析这次中断"
 ```
