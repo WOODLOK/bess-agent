@@ -1,0 +1,93 @@
+{
+  "$id": "schemas/impact_estimates.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Impact Estimates",
+  "description": "阶段四输出：对中断影响的定性/半定量区间估计，所有估计以区间形式给出并标注置信度。",
+  "type": "object",
+  "required": ["case_id", "generated_at", "estimates"],
+  "properties": {
+    "case_id": {
+      "type": "string",
+      "description": "关联的案例 ID"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "估计生成时间"
+    },
+    "estimates": {
+      "type": "object",
+      "required": ["delay", "cost", "compliance"],
+      "properties": {
+        "delay": {
+          "type": "object",
+          "required": ["range_days", "confidence"],
+          "properties": {
+            "range_days": {
+              "type": "object",
+              "required": ["min", "max"],
+              "properties": {
+                "min": { "type": "integer", "minimum": 0, "description": "最小估计延误天数" },
+                "max": { "type": "integer", "minimum": 0, "description": "最大估计延误天数" }
+              }
+            },
+            "confidence": { "type": "string", "enum": ["low", "medium", "high"] },
+            "basis": { "type": "string", "description": "估计依据简述（对比同期行业数据/用户自述/证据推断）" }
+          }
+        },
+        "cost": {
+          "type": "object",
+          "required": ["description", "confidence"],
+          "properties": {
+            "description": { "type": "string", "description": "成本影响描述（可为定性，如'因现货采购产生20%–40%溢价'）" },
+            "range_percentage": {
+              "type": "object",
+              "properties": {
+                "min": { "type": "number", "description": "最小估计增幅百分比" },
+                "max": { "type": "number", "description": "最大估计增幅百分比" }
+              }
+            },
+            "confidence": { "type": "string", "enum": ["low", "medium", "high"] },
+            "basis": { "type": "string", "description": "估计依据" }
+          }
+        },
+        "compliance": {
+          "type": "object",
+          "required": ["risk_level", "description", "confidence"],
+          "properties": {
+            "risk_level": { "type": "string", "enum": ["none", "low", "medium", "high", "critical"], "description": "合规风险等级" },
+            "description": { "type": "string", "description": "合规风险描述（涉及哪些法规、可能的后果）" },
+            "applicable_regulations": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "涉及的法规列表（如 IRA/FEOC, UFLPA, EU Battery Regulation 2023/1542）"
+            },
+            "confidence": { "type": "string", "enum": ["low", "medium", "high"] }
+          }
+        },
+        "project": {
+          "type": "object",
+          "required": ["impact_description", "confidence"],
+          "properties": {
+            "impact_description": { "type": "string", "description": "对项目层面的综合影响（如COD延期、违约金风险）" },
+            "contract_clauses_triggered": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "可能触发的合同条款"
+            },
+            "confidence": { "type": "string", "enum": ["low", "medium", "high"] }
+          }
+        }
+      }
+    },
+    "overall_confidence": {
+      "type": "string",
+      "enum": ["low", "medium", "high"],
+      "description": "整体估计置信度"
+    },
+    "estimation_notes": {
+      "type": "string",
+      "description": "估计方法说明与局限性"
+    }
+  }
+}

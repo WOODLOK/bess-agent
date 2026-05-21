@@ -1,0 +1,87 @@
+{
+  "$id": "schemas/causal_chain.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Causal Chain",
+  "description": "阶段四输出：综合证据后的最终因果链，以"事件 → 中间机制 → 用户观察到的现象"的链式叙述呈现，各环节标注证据来源。",
+  "type": "object",
+  "required": ["case_id", "generated_at", "root_cause", "intermediate_mechanisms", "observed_outcomes", "evidence_references"],
+  "properties": {
+    "case_id": {
+      "type": "string",
+      "description": "关联的案例 ID"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "因果链生成时间"
+    },
+    "root_cause": {
+      "type": "object",
+      "required": ["event", "factor_category", "confidence"],
+      "properties": {
+        "event": { "type": "string", "description": "根因事件描述" },
+        "factor_category": {
+          "type": "string",
+          "enum": ["logistics", "materials", "projects", "policy", "multi_factor"],
+          "description": "根因所属因素类别"
+        },
+        "confidence": { "type": "string", "enum": ["low", "medium", "high"], "description": "根因置信度" }
+      }
+    },
+    "intermediate_mechanisms": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["step", "mechanism", "factor_category"],
+        "properties": {
+          "step": { "type": "integer", "description": "因果链步骤序号" },
+          "mechanism": { "type": "string", "description": "从事件到现象的中间传导机制描述" },
+          "factor_category": { "type": "string", "enum": ["logistics", "materials", "projects", "policy"], "description": "该环节涉及的因素类别" },
+          "evidence_ids": {
+            "type": "array",
+            "items": { "type": "string", "pattern": "^E[0-9]+$" },
+            "description": "支撑该环节的 evidence_log 条目 ID 列表"
+          },
+          "confidence": { "type": "string", "enum": ["low", "medium", "high"] }
+        }
+      },
+      "description": "中间机制链路"
+    },
+    "observed_outcomes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["outcome", "matches_user_claim"],
+        "properties": {
+          "outcome": { "type": "string", "description": "用户观察到的最终现象" },
+          "matches_user_claim": { "type": "boolean", "description": "是否与用户在阶段一中提出的 user_claim 匹配" },
+          "evidence_ids": { "type": "array", "items": { "type": "string", "pattern": "^E[0-9]+$" } }
+        }
+      },
+      "description": "观察到的结果（对应阶段一的 observations 和 user_claims）"
+    },
+    "evidence_references": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^E[0-9]+$" },
+      "description": "因果链中所有引用的证据 ID 汇总列表"
+    },
+    "cross_factor_consistency": {
+      "type": "string",
+      "enum": ["consistent", "partially_conflicting", "highly_conflicting", "insufficient_data"],
+      "description": "跨因素证据一致性评估"
+    },
+    "rejected_hypotheses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["hypothesis_id", "rejection_reason"],
+        "properties": {
+          "hypothesis_id": { "type": "string" },
+          "rejection_reason": { "type": "string", "description": "为何该假设被排除" },
+          "refuting_evidence_ids": { "type": "array", "items": { "type": "string", "pattern": "^E[0-9]+$" } }
+        }
+      },
+      "description": "被证据排除的假设及其排除原因"
+    }
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "$id": "schemas/event_skeleton.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Event Skeleton",
+  "description": "阶段一输出：从用户提交的非结构化材料中抽取的事件骨架，区分事实观察、用户主观断言、推测线索与未知字段。",
+  "type": "object",
+  "required": ["case_id", "time_window", "parties", "locations", "materials", "observations", "user_claims", "inferred_clues", "unknown_fields"],
+  "properties": {
+    "case_id": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}-[a-z0-9-]+$",
+      "description": "案例唯一标识，格式 YYYY-MM-DD-<2-3-word-slug>"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "骨架创建时间（ISO 8601）"
+    },
+    "time_window": {
+      "type": "object",
+      "required": ["earliest", "latest"],
+      "properties": {
+        "earliest": { "type": "string", "format": "date", "description": "事件最早可能日期" },
+        "latest": { "type": "string", "format": "date", "description": "事件最晚可能日期" },
+        "precision": { "type": "string", "enum": ["day", "week", "month", "quarter", "unknown"], "description": "时间窗口精度" }
+      }
+    },
+    "parties": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "role"],
+        "properties": {
+          "name": { "type": "string", "description": "相关方名称（可为供应商、承运人、客户、监管机构等）" },
+          "role": { "type": "string", "enum": ["supplier", "carrier", "customer", "regulator", "insurer", "other"], "description": "相关方角色" },
+          "certainty": { "type": "string", "enum": ["explicit", "inferred"], "description": "名称来源：材料明确提及(explicit)或推测(inferred)" }
+        }
+      }
+    },
+    "locations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "role"],
+        "properties": {
+          "name": { "type": "string", "description": "地理位置名称（产地/口岸/目的地）" },
+          "role": { "type": "string", "enum": ["origin", "port_of_loading", "port_of_discharge", "destination", "transit", "other"], "description": "在供应链中的位置角色" },
+          "certainty": { "type": "string", "enum": ["explicit", "inferred"] }
+        }
+      }
+    },
+    "materials": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["category"],
+        "properties": {
+          "category": { "type": "string", "enum": ["lfp_cell", "module_pack", "pcs", "bms", "ems", "thermal_fire_suppression", "cathode_material", "anode_material", "electrolyte", "other"], "description": "物料/组件类别" },
+          "specification": { "type": "string", "description": "规格描述（如 280Ah LFP方形铝壳电芯）" },
+          "quantity": { "type": "string", "description": "涉及数量（可为非精确描述）" }
+        }
+      }
+    },
+    "observations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["field", "value", "source"],
+        "properties": {
+          "field": { "type": "string", "description": "观察到的现象名称" },
+          "value": { "type": "string", "description": "可直接验证的事实值" },
+          "source": { "type": "string", "description": "材料中的出处引用（如'合同附件第2页'、'邮件2022-04-15'）" }
+        }
+      },
+      "description": "可直接验证的事实（如合同号、提单日期、具体金额）"
+    },
+    "user_claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["claim", "source"],
+        "properties": {
+          "claim": { "type": "string", "description": "用户的主观断言" },
+          "source": { "type": "string", "description": "断言来源（如'CEO在邮件中表示'）" },
+          "needs_verification": { "type": "boolean", "default": true, "description": "是否需要在后续阶段验证" }
+        }
+      },
+      "description": "用户的主观断言或解释（如'我们认为延误主要是因为供应商管理失误'），需要在阶段三验证"
+    },
+    "inferred_clues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["clue", "basis"],
+        "properties": {
+          "clue": { "type": "string", "description": "推测线索" },
+          "basis": { "type": "string", "description": "推测依据（材料的什么特征导致此推测）" },
+          "priority": { "type": "string", "enum": ["high", "medium", "low"], "description": "作为阶段二待验证假设方向的优先级" }
+        }
+      },
+      "description": "来自材料的间接推测线索，在阶段二将作为高优先级的待验证假设方向"
+    },
+    "unknown_fields": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["field", "importance"],
+        "properties": {
+          "field": { "type": "string", "description": "缺失但对后续推理至关重要的信息名称" },
+          "importance": { "type": "string", "enum": ["critical", "high", "medium"], "description": "对后续推理的重要程度" },
+          "suggested_source": { "type": "string", "description": "建议从何处获取（如'可向供应商确认'、'查阅同期SCFI指数'）" }
+        }
+      },
+      "description": "明显缺失但对后续推理至关重要的信息，作为占位符待补全"
+    }
+  }
+}

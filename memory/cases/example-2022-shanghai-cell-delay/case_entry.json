@@ -1,0 +1,124 @@
+{
+  "case_id": "example-2022-shanghai-cell-delay",
+  "creation_date": "2026-05-21",
+  "event_time_window": {
+    "earliest": "2022-02-28",
+    "latest": "2022-06-10"
+  },
+  "materials": [
+    {
+      "category": "lfp_cell",
+      "specification": "280Ah LFP方形铝壳电芯"
+    }
+  ],
+  "suppliers": [
+    {
+      "name": "(匿名)中国LFP电芯供应商",
+      "role": "cell_manufacturer",
+      "location": "中国华东地区"
+    }
+  ],
+  "route": {
+    "origin": "中国上海",
+    "port_of_loading": "上海港（洋山/外高桥）",
+    "port_of_discharge": "洛杉矶港",
+    "destination": "美国加州项目现场",
+    "transit_mode": "sea"
+  },
+  "event_signature": [
+    {
+      "type": "regional_control",
+      "subtype": "covid_lockdown"
+    },
+    {
+      "type": "route_disruption",
+      "subtype": "port_congestion"
+    },
+    {
+      "type": "material_price_shock",
+      "subtype": "lithium_carbonate_surge"
+    },
+    {
+      "type": "compliance_seizure",
+      "subtype": "uflpa_review"
+    }
+  ],
+  "causal_chain_summary": "2022年3月28日起上海分阶段封控导致洋山港和外高桥港区集卡进港受限、集装箱作业能力降至正常水平的约60%，已备好的280Ah LFP电芯无法按时装船，装船日期从合同约定的3月1日推迟至5月上旬。同期电池级碳酸锂现货价从年初约30万元/吨上涨至4月约50万元/吨，加大了供应商在固定价合同下的履约成本压力，供应商在邮件中多次提及renegotiation。货物最终于6月初抵达洛杉矶港，因部分原材料涉及新疆地区触发UFLPA补充审查，清关多花约1周但未被扣留。总延误估计约60-75天，项目COD推迟约一个季度。整体置信度：中。",
+  "impact_metrics": {
+    "delay": {
+      "range_days": { "min": 60, "max": 75 },
+      "confidence": "medium"
+    },
+    "cost": {
+      "description": "现货补采电芯的价差约40%以上（因碳酸锂在合同签订后上涨约60%），叠加海运即期运价约为合同价3-4倍的可能物流成本传导",
+      "confidence": "low"
+    },
+    "compliance_risk": {
+      "level": "medium",
+      "applicable_regulations": ["UFLPA (2022-06-21生效)"],
+      "confidence": "medium"
+    },
+    "project_impact": {
+      "description": "项目COD推迟约一个季度",
+      "confidence": "medium"
+    }
+  },
+  "evidence_links": [
+    {
+      "evidence_id": "E1",
+      "tool": "tool-logistics",
+      "result_summary": "SCFI综合指数2022年4月维持在4,200-4,400点，约为2019年均值的4.2倍；上海至美西即期运价$8,500-$9,500/FEU",
+      "factor_category": "logistics",
+      "source_url": "https://example.com/scfi-april-2022"
+    },
+    {
+      "evidence_id": "E3",
+      "tool": "tool-logistics",
+      "result_summary": "上海港4月集装箱作业能力降至正常水平约60%，多家航运媒体报道集卡进港受限",
+      "factor_category": "logistics",
+      "source_url": "https://example.com/shanghai-port-april-2022"
+    },
+    {
+      "evidence_id": "E8",
+      "tool": "tool-materials",
+      "result_summary": "电池级碳酸锂2022年4月SMM报价约50万元/吨，较2022年1月约30万元/吨上涨约67%",
+      "factor_category": "materials",
+      "source_url": "https://example.com/lithium-carbonate-april-2022"
+    }
+  ],
+  "confidence_level": "medium",
+  "source_documents": [
+    {
+      "filename": "narrative.md",
+      "type": "text",
+      "summary": "项目经理在2022年6月内部复盘会议上的口述记录，描述电芯交付延误全过程"
+    },
+    {
+      "filename": "email_2022-02-28_supplier.txt",
+      "type": "email",
+      "summary": "供应商通知上海港集卡运力偏紧，预计延迟1-2周"
+    },
+    {
+      "filename": "email_2022-03-18_supplier.txt",
+      "type": "email",
+      "summary": "供应商报告封控影响，首次提及renegotiation"
+    },
+    {
+      "filename": "email_2022-04-20_internal.txt",
+      "type": "email",
+      "summary": "项目经理要求法务审查不可抗力条款并询价现货"
+    }
+  ],
+  "related_cases": [],
+  "cross_factor_check": {
+    "consistency": "partially_conflicting",
+    "notes": "物流因素（SCFI高位+港口封控）证据强且一致；原材料因素（碳酸锂冲顶）证据强但与延误的直接因果关系较弱——仅能证明'价格压力存在'，不能直接证明'供应商因价格压力主动拖延'。政策因素（UFLPA）证据较弱——清关审查增加了约1周延迟，但非延误主因。物流是主导传导通道，原材料是次级因素。"
+  },
+  "revision_history": [
+    {
+      "revision_id": 1,
+      "date": "2026-05-21",
+      "summary": "初始版本——示例案例，基于示例输入手工构建"
+    }
+  ]
+}

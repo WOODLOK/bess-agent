@@ -1,0 +1,30 @@
+{
+  "case_id": "example-2022-shanghai-cell-delay",
+  "generated_at": "2026-05-21T00:00:00Z",
+  "estimates": {
+    "delay": {
+      "range_days": { "min": 60, "max": 75 },
+      "confidence": "medium",
+      "basis": "装船从3月初推迟至5月上旬（约60天），加上海运3周+清关额外1周。取下界60天为'仅港口拥堵'情景，取上界75天为'港口拥堵+清关审查'复合情景。"
+    },
+    "cost": {
+      "description": "现货补采电芯价差约40%以上（碳酸锂从合同签订时约22万元/吨涨至采购时约50万元/吨）；海运成本传导因缺乏用户合同运费条款而无法具体估计",
+      "range_percentage": { "min": 40, "max": 60 },
+      "confidence": "low",
+      "basis": "基于碳酸锂价格涨幅（127%）与用户口述'现货价比合同价高了40%都不止'的交叉参考。缺乏合同具体价格条款与现货补采数量。"
+    },
+    "compliance": {
+      "risk_level": "medium",
+      "description": "UFLPA审查增加了约1周清关延迟但未扣留。随着UFLPA在3周后（2022-06-21）正式生效，未来类似供应链结构将面临更高的审查风险。",
+      "applicable_regulations": ["UFLPA (19 USC § 1307)"],
+      "confidence": "medium"
+    },
+    "project": {
+      "impact_description": "项目COD从原计划推迟约一个季度。除到货延误外，现货补采和合同重谈也消耗了项目管理资源。合同中的Liquidated Damages条款可能与不可抗力条款产生交互——需要法务审查。",
+      "contract_clauses_triggered": ["不可抗力(Force Majeure)", "违约金(Liquidated Damages)"],
+      "confidence": "medium"
+    }
+  },
+  "overall_confidence": "medium",
+  "estimation_notes": "本估计基于公开数据（SCFI/碳酸锂价格）与用户口述的交叉验证。主要不确定性来源：(1)缺乏合同具体条款（价格、运费、不可抗力定义），(2)供应商行为动机无法被公开数据直接验证，(3)现货补采的细节未知。这三项是后续补充信息后能显著缩小不确定性区间的方向。"
+}

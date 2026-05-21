@@ -1,0 +1,65 @@
+{
+  "$id": "schemas/evidence_item.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Evidence Item",
+  "description": "阶段三的单条证据三元记录：包含工具调用、检索内容、结果摘要及其对各假设的支持/反驳/中立标注。",
+  "type": "object",
+  "required": ["tool", "query", "result_summary", "support_or_refute_per_hypothesis", "retrieved_at", "status"],
+  "properties": {
+    "evidence_id": {
+      "type": "string",
+      "pattern": "^E[0-9]+$",
+      "description": "证据条目编号，如 E1, E2, ..."
+    },
+    "tool": {
+      "type": "string",
+      "enum": ["tool-logistics", "tool-materials", "tool-projects", "tool-policy", "tool-general-web"],
+      "description": "发起检索的工具名称"
+    },
+    "query": {
+      "type": "object",
+      "required": ["search_terms", "time_filter", "domain_filter"],
+      "properties": {
+        "search_terms": { "type": "string", "description": "实际使用的检索关键词" },
+        "time_filter": { "type": "string", "description": "检索的时间过滤条件" },
+        "domain_filter": { "type": "string", "description": "检索的域名或来源过滤条件（如 .gov, .eu）" }
+      }
+    },
+    "result_summary": {
+      "type": "string",
+      "description": "检索结果的简短摘要，包括检索到的关键数据或事实，为空时说明'无相关结果'"
+    },
+    "support_or_refute_per_hypothesis": {
+      "type": "object",
+      "description": "该条证据对每条候选假设的支撑方向",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["hypothesis_id", "direction", "rationale"],
+        "properties": {
+          "hypothesis_id": { "type": "string", "description": "对应假设 ID（如 H1）" },
+          "direction": { "type": "string", "enum": ["support", "refute", "neutral"], "description": "支撑方向：支持/反驳/中立" },
+          "rationale": { "type": "string", "description": "方向判断的简短理由" }
+        }
+      }
+    },
+    "retrieved_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "证据检索时间（ISO 8601）"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["success", "empty", "failed"],
+      "description": "检索状态：成功获取/success，检索为空/empty，调用失败/failed"
+    },
+    "error_detail": {
+      "type": "string",
+      "description": "当 status 为 failed 时的错误信息"
+    },
+    "source_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "证据来源 URL（如有）"
+    }
+  }
+}

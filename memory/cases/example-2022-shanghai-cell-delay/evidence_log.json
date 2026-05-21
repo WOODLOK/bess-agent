@@ -1,0 +1,58 @@
+{
+  "case_id": "example-2022-shanghai-cell-delay",
+  "generated_at": "2026-05-21T00:00:00Z",
+  "entries": [
+    {
+      "evidence_id": "E1",
+      "tool": "tool-logistics",
+      "query": {
+        "search_terms": "SCFI Shanghai Containerized Freight Index April 2022",
+        "time_filter": "2022-03-15 to 2022-05-15",
+        "domain_filter": ""
+      },
+      "result_summary": "SCFI综合指数在2022年4月维持在4,200-4,400点区间，约为2019年均值(1,000点)的4.2倍。上海至美西航线即期运价约$8,500-$9,500/FEU。对比静态参考数据scfi_ccfi_history.csv：一致。",
+      "support_or_refute_per_hypothesis": {
+        "H1": { "hypothesis_id": "H1", "direction": "support", "rationale": "SCFI高位直接支撑'港口延误'假设" }
+      },
+      "retrieved_at": "2026-05-21T00:00:00Z",
+      "status": "success",
+      "source_url": "(示意性URL，实际运行时由WebSearch返回)"
+    },
+    {
+      "evidence_id": "E3",
+      "tool": "tool-logistics",
+      "query": {
+        "search_terms": "Shanghai port congestion lockdown operation capacity April 2022",
+        "time_filter": "2022-03-28 to 2022-05-31",
+        "domain_filter": ""
+      },
+      "result_summary": "多家航运媒体报道：上海封控期间洋山港和外高桥港区集卡进港受限，码头作业能力降至正常水平约60%。部分船公司宣布blank sailings或跳港。",
+      "support_or_refute_per_hypothesis": {
+        "H1": { "hypothesis_id": "H1", "direction": "support", "rationale": "港口作业能力骤降直接导致货物无法按计划装船" }
+      },
+      "retrieved_at": "2026-05-21T00:00:00Z",
+      "status": "success",
+      "source_url": "(示意性URL)"
+    },
+    {
+      "evidence_id": "E8",
+      "tool": "tool-materials",
+      "query": {
+        "search_terms": "battery grade lithium carbonate price China April 2022 SMM",
+        "time_filter": "2022-03-01 to 2022-06-30",
+        "domain_filter": ""
+      },
+      "result_summary": "SMM数据显示电池级碳酸锂中国现货价2022年4月约50万元/吨，较2021年9月(合同签订月)约22万元/吨上涨约127%，较2022年1月约30万元/吨上涨约67%。对比静态参考数据battery_materials_prices.csv：一致。",
+      "support_or_refute_per_hypothesis": {
+        "H1": { "hypothesis_id": "H1", "direction": "neutral", "rationale": "碳酸锂价格独立于港口拥堵，但两者的同步发生放大了综合影响" }
+      },
+      "retrieved_at": "2026-05-21T00:00:00Z",
+      "status": "success",
+      "source_url": "(示意性URL)"
+    }
+  ],
+  "cross_factor_check": {
+    "consistency": "partially_conflicting",
+    "notes": "物流因素和原材料因素各自独立获得了强证据支撑。但两者之间的因果关系（原材料价格是否驱动了供应商行为）缺乏直接证据——这是跨因素交叉验证暴露的关键不确定性，已在causal_chain.md中以[假设，待验证]标注。"
+  }
+}

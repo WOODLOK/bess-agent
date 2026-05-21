@@ -1,0 +1,182 @@
+{
+  "$id": "schemas/case_entry.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Case Entry",
+  "description": "阶段五写入案例记忆库的完整条目，字段严格对齐论文 4.4 节列出的结构化元数据表。每条案例是记忆库中一个可独立检索的资产单元。",
+  "type": "object",
+  "required": ["case_id", "creation_date", "event_time_window", "materials", "suppliers", "route", "event_signature", "causal_chain_summary", "impact_metrics", "evidence_links", "confidence_level", "source_documents"],
+  "properties": {
+    "case_id": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}-[a-z0-9-]+$",
+      "description": "案例唯一标识"
+    },
+    "creation_date": {
+      "type": "string",
+      "format": "date",
+      "description": "案例条目创建日期"
+    },
+    "event_time_window": {
+      "type": "object",
+      "required": ["earliest", "latest"],
+      "properties": {
+        "earliest": { "type": "string", "format": "date" },
+        "latest": { "type": "string", "format": "date" }
+      },
+      "description": "事件发生的时间窗口"
+    },
+    "materials": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["category", "specification"],
+        "properties": {
+          "category": { "type": "string", "enum": ["lfp_cell", "module_pack", "pcs", "bms", "ems", "thermal_fire_suppression", "cathode_material", "anode_material", "electrolyte", "other"] },
+          "specification": { "type": "string", "description": "规格描述，如 LFP电芯-280Ah-方形铝壳" }
+        }
+      },
+      "description": "涉及的物料/组件"
+    },
+    "suppliers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "role"],
+        "properties": {
+          "name": { "type": "string", "description": "供应商名称（可匿名化处理）" },
+          "role": { "type": "string", "enum": ["cell_manufacturer", "module_assembler", "pcs_supplier", "bms_supplier", "raw_material_supplier", "logistics_provider", "other"] },
+          "location": { "type": "string", "description": "供应商所在地区" }
+        }
+      },
+      "description": "涉及的供应商"
+    },
+    "route": {
+      "type": "object",
+      "required": ["origin", "destination"],
+      "properties": {
+        "origin": { "type": "string", "description": "产地（如 中国上海）" },
+        "port_of_loading": { "type": "string", "description": "装货港" },
+        "port_of_discharge": { "type": "string", "description": "卸货港" },
+        "destination": { "type": "string", "description": "最终目的地（如 美国加州项目现场）" },
+        "transit_mode": { "type": "string", "enum": ["sea", "air", "rail", "road", "multimodal"] }
+      },
+      "description": "产地→口岸→目的地的运输路线"
+    },
+    "event_signature": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "subtype"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["regional_control", "route_disruption", "policy_shock", "material_price_shock", "compliance_seizure", "supplier_default", "quality_issue", "contract_dispute", "other"],
+            "description": "事件类型标签"
+          },
+          "subtype": { "type": "string", "description": "事件子类型（如 regional_control 下可为 covid_lockdown, industrial_power_curtailment）" }
+        }
+      },
+      "description": "事件类型标签（多选，一个案例可能涉及多种事件类型）"
+    },
+    "causal_chain_summary": {
+      "type": "string",
+      "description": "阶段四生成的因果链摘要文本（约 150-300 字），用于语义检索与人工快速浏览"
+    },
+    "impact_metrics": {
+      "type": "object",
+      "required": ["delay", "cost", "compliance_risk", "project_impact"],
+      "properties": {
+        "delay": {
+          "type": "object",
+          "properties": {
+            "range_days": { "type": "object", "properties": { "min": { "type": "integer" }, "max": { "type": "integer" } } },
+            "confidence": { "type": "string", "enum": ["low", "medium", "high"] }
+          }
+        },
+        "cost": {
+          "type": "object",
+          "properties": {
+            "description": { "type": "string" },
+            "confidence": { "type": "string", "enum": ["low", "medium", "high"] }
+          }
+        },
+        "compliance_risk": {
+          "type": "object",
+          "properties": {
+            "level": { "type": "string", "enum": ["none", "low", "medium", "high", "critical"] },
+            "applicable_regulations": { "type": "array", "items": { "type": "string" } },
+            "confidence": { "type": "string", "enum": ["low", "medium", "high"] }
+          }
+        },
+        "project_impact": {
+          "type": "object",
+          "properties": {
+            "description": { "type": "string" },
+            "confidence": { "type": "string", "enum": ["low", "medium", "high"] }
+          }
+        }
+      },
+      "description": "各类影响因素的半结构化估计，与论文 5.2 节的 M2-M3 指标对应"
+    },
+    "evidence_links": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["evidence_id", "tool", "result_summary", "factor_category"],
+        "properties": {
+          "evidence_id": { "type": "string", "pattern": "^E[0-9]+$" },
+          "tool": { "type": "string", "enum": ["tool-logistics", "tool-materials", "tool-projects", "tool-policy", "tool-general-web"] },
+          "result_summary": { "type": "string" },
+          "factor_category": { "type": "string", "enum": ["logistics", "materials", "projects", "policy", "general"] },
+          "source_url": { "type": "string", "format": "uri" }
+        }
+      },
+      "description": "阶段三记录的完整证据条目汇总"
+    },
+    "confidence_level": {
+      "type": "string",
+      "enum": ["low", "medium", "high"],
+      "description": "本案例整体的置信度评级"
+    },
+    "source_documents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["filename", "type"],
+        "properties": {
+          "filename": { "type": "string", "description": "原始材料文件名" },
+          "type": { "type": "string", "enum": ["text", "pdf", "image", "email", "spreadsheet", "other"], "description": "材料类型" },
+          "summary": { "type": "string", "description": "材料内容简短摘要" }
+        }
+      },
+      "description": "指向用户原始上传材料的引用"
+    },
+    "related_cases": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}-[a-z0-9-]+$" },
+      "description": "与本案例语义关联的历史案例 case_id 列表"
+    },
+    "cross_factor_check": {
+      "type": "object",
+      "required": ["consistency", "notes"],
+      "properties": {
+        "consistency": { "type": "string", "enum": ["consistent", "partially_conflicting", "highly_conflicting", "insufficient_data"] },
+        "notes": { "type": "string", "description": "跨因素交叉验证的详细说明" }
+      },
+      "description": "跨因素交叉验证结果"
+    },
+    "revision_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["revision_id", "date", "summary"],
+        "properties": {
+          "revision_id": { "type": "integer" },
+          "date": { "type": "string", "format": "date" },
+          "summary": { "type": "string", "description": "修订内容简述" }
+        }
+      },
+      "description": "修订历史记录"
+    }
+  }
+}

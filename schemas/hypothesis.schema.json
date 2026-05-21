@@ -1,0 +1,77 @@
+{
+  "$id": "schemas/hypothesis.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Candidate Hypotheses",
+  "description": "阶段二输出：3-5 条候选因果假设，每条按"何时-何处-为何-何种影响"四问产出，附先验权重。",
+  "type": "object",
+  "required": ["case_id", "generated_at", "hypotheses"],
+  "properties": {
+    "case_id": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}-[a-z0-9-]+$",
+      "description": "关联的案例 ID"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "假设生成时间（ISO 8601）"
+    },
+    "hypotheses": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "required": ["id", "summary", "when", "where_in_chain", "why", "so_what", "prior_weight"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^H[0-9]$",
+            "description": "假设编号，如 H1, H2, H3"
+          },
+          "summary": {
+            "type": "string",
+            "description": "假设的一句话概述"
+          },
+          "when": {
+            "type": "object",
+            "required": ["time_window", "macro_context"],
+            "properties": {
+              "time_window": { "type": "string", "description": "假设的事件发生时间窗口" },
+              "macro_context": { "type": "string", "description": "与同期宏观背景的关联（如疫情管控阶段、关税生效节奏、运价周期）" }
+            }
+          },
+          "where_in_chain": {
+            "type": "string",
+            "enum": ["upstream_mineral", "cathode_production", "cell_manufacturing", "module_pack", "sea_freight", "customs_clearance", "inland_transport", "grid_connection", "multi_stage"],
+            "description": "在BESS供应链中最可能的延误/中断环节"
+          },
+          "why": {
+            "type": "string",
+            "description": "在该时间窗口与环节，可能已发生的事件及其因果机制解释"
+          },
+          "so_what": {
+            "type": "string",
+            "description": "如果该假设成立，会对用户观察到的现象产生何种解释（如延误天数、成本影响）"
+          },
+          "prior_weight": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "先验权重（0-1），基于材料线索的初步合理性和行业知识排序"
+          },
+          "factors_involved": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["logistics", "materials", "projects", "policy"]
+            },
+            "minItems": 1,
+            "description": "该假设涉及的影响因素类别（多选），用于驱动阶段三的工具选择"
+          }
+        }
+      },
+      "description": "候选因果假设列表，3-5 条"
+    }
+  }
+}
